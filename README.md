@@ -4,7 +4,10 @@ This web application provides the front door into the Inetgreatly initiative. It
 
 # Local Development
 
+Node.js v10.10 or higher should be used.
+
 ```
+npm i -g yarn@1.9
 yarn install
 yarn start:dev
 ```
