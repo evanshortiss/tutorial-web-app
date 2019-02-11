@@ -10,6 +10,7 @@ const giteaClient = require('./gitea_client');
 const gitClient = require('./git_client');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
+const querystring = require('querystring')
 
 const app = express();
 app.use(bodyParser.json());
@@ -169,10 +170,16 @@ function resolveWalkthroughLocations(locations) {
       } else if (isGitRepo(location)) {
         console.log(`Importing walkthrough from git ${location}`);
         const clonePath = path.join(TMP_DIR, tmpDirPrefix);
+
+        // Need to parse out query params for walkthroughs, e.g custom directory
+        const locationParts = location.split('?')
+        const cloneUrl = locationParts[0]
+        const walkthroughParams = querystring.parse(locationParts[1])
+
         return gitClient
-          .cloneRepo(location, clonePath)
+          .cloneRepo(cloneUrl, clonePath)
           .then(cloned => {
-            const locationResult = Object.assign({}, locationResultTemplate, { local: path.join(cloned, 'walkthroughs') });
+            const locationResult = Object.assign({}, locationResultTemplate, { local: path.join(cloned, walkthroughParams.walkthroughsFolder ? walkthroughParams.walkthroughsFolder : 'walkthroughs') });
             return resolve(locationResult);
           })
           .catch(reject);
