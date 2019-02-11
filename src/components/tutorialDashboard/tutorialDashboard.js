@@ -5,15 +5,17 @@ import TutorialCard from '../tutorialCard/tutorialCard';
 
 const TutorialDashboard = props => {
   const { walkthroughs, userProgress } = props;
-  const cards = [];
-  walkthroughs.map((walkthrough, i) => {
+  
+  const cards = walkthroughs.sort((w1, w2) => {
+    return `${w1.id} ${w1.title}` < `${w2.id} ${w2.title}` ? -1 : 1
+  }).map((walkthrough, i) => {
     const currentProgress = userProgress[walkthrough.id];
     let startedText;
     if (currentProgress === undefined) startedText = 'Get Started';
     else if (currentProgress.progress === 100) startedText = 'Completed';
     else startedText = 'Resume';
 
-    return cards.push(
+    return (
       <Col xs={12} sm={4} key={walkthrough.id}>
         <TutorialCard
           title={walkthrough.title}
